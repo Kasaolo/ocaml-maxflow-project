@@ -1,5 +1,7 @@
 open Gfile
-    
+open Tools
+open Ford_fulkerson
+
 let () =
 
   (* Check the number of command-line arguments *)
@@ -17,7 +19,7 @@ let () =
 
   (* Arguments are : infile(1) source-id(2) sink-id(3) outfile(4) *)
   
-  let infile = Sys.argv.(1)
+  let infile = Sys.argv.(1) 
   and outfile = Sys.argv.(4)
   
   (* These command-line arguments are not used for the moment. *)
@@ -25,11 +27,24 @@ let () =
   and _sink = int_of_string Sys.argv.(3)
   in
 
+  let maxflow = min_flow [{src=0;tgt=1;lbl=(3,6)};{src=1;tgt=2;lbl=(0,4)};{src=2;tgt=3;lbl=(2,7)}] in
+  Printf.printf "Flot max disponible = %d" maxflow ;
+
   (* Open file *)
   let graph = from_file infile in
+  
 
+
+
+  (*let graphtest = clone_nodes graph in*)
+  let graphInt = gmap graph (fun str -> int_of_string str) in
+  let graphtest = init_labels graphInt in
+  
+
+  let graphStr = gmap graphtest (fun (_,x) -> string_of_int x) in
+ 
   (* Rewrite the graph that has been read. *)
-  let () = write_file outfile graph in
+  let () = export outfile graphStr in 
 
   ()
 
