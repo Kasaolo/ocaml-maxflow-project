@@ -27,7 +27,7 @@ let () =
   and _sink = int_of_string Sys.argv.(3)
   in
 
-  let maxflow = min_flow [{src=0;tgt=1;lbl=(3,6)};{src=1;tgt=2;lbl=(0,4)};{src=2;tgt=3;lbl=(2,7)}] in
+  let maxflow = min_flow [{src=0;tgt=1;lbl=6};{src=1;tgt=2;lbl=4};{src=2;tgt=3;lbl=7}] in
   Printf.printf "Flot max disponible = %d" maxflow ;
 
   (* Open file *)
@@ -41,7 +41,7 @@ let () =
   let graphtest = init_labels graphInt in
   
 
-  let graphStr = gmap graphtest (fun (_,x) -> string_of_int x) in
+  let graphStr = gmap graphtest (fun x -> string_of_int x) in
  
   (* Rewrite the graph that has been read. *)
   let () = export outfile graphStr in 
