@@ -8,6 +8,6 @@ val available_flow : int arc -> int
 
 val min_flow : int arc list -> int
 
-(*val find_path : int graph -> id -> id -> int arc list*)
+val find_path : int graph -> id -> id -> int arc list
 
 val increase_flow : int graph -> int arc list -> int graph

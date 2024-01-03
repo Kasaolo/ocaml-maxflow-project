@@ -27,19 +27,17 @@ let () =
   and _sink = int_of_string Sys.argv.(3)
   in
 
-  let maxflow = min_flow [{src=0;tgt=1;lbl=6};{src=1;tgt=2;lbl=4};{src=2;tgt=3;lbl=7}] in
-  Printf.printf "Flot max disponible = %d" maxflow ;
 
   (* Open file *)
   let graph = from_file infile in
-  
-
 
 
   (*let graphtest = clone_nodes graph in*)
   let graphInt = gmap graph (fun str -> int_of_string str) in
-  let graphtest = init_labels graphInt in
+  let graphInit = init_labels graphInt in
+  let graphtest = increase_flow graphInit (find_path graphInit 0 5) in
   
+  (*[{src=0;tgt=1;lbl=7};{src=1;tgt=4;lbl=1};{src=4;tgt=5;lbl=14}]*)
 
   let graphStr = gmap graphtest (fun x -> string_of_int x) in
  
@@ -47,4 +45,3 @@ let () =
   let () = export outfile graphStr in 
 
   ()
-
