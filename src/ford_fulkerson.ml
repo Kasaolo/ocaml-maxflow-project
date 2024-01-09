@@ -12,34 +12,30 @@ let available_flow arc =
 
 (* renvoie le débit dispo le + petit sur ce chemin *)
 let min_flow pth = 
-  List.fold_left (fun acu a -> if (available_flow a) <= acu then (available_flow a) else acu) (available_flow (List.hd pth)) pth ;;
+  List.fold_left (fun acu a -> if (available_flow a) <= acu 
+    then (available_flow a) else acu) (available_flow (List.hd pth)) pth ;;
  
 (* Trouve le chemin optimal entre la source et la destination en réalisant un parcours en largeur*)
 
-let rec choose_aux l_arc gr dest acu = 
-  match l_arc with
-  | [] -> []
-  | arc :: rest -> if (arc.lbl > 0 && arc.tgt == dest) then arc :: acu 
-  else if (arc.lbl > 0) then choose_aux (out_arcs gr arc.tgt) gr dest (arc :: acu)
-  else choose_aux rest gr dest acu;;
-
-
-let find_path gr src dest =
-  let src_arcs = out_arcs gr src in
-    let pth = choose_aux (src_arcs) gr dest [] in
-    pth;;
- 
-
-
-(* Vrai si l'arc mène à la destination *)
-let find_path gr src dest =
-  let rec find_path_loop gr src dest acu = 
-  match (out_arcs src) with 
-  | arc::rest -> if arc.lbl > 0 then (if arc.tgt = dest then Some arc::acu else find_path_loop gr arc.tgt dest arc::acu; find_path_loop gr src dest acu) else None
-  | [] -> None
-       
+  let find_path gr src dst =
+    let rec aux marked_arcs pth arc =
+      if arc.tgt = dst then List.rev (arc :: pth)
+      else if List.mem arc marked_arcs then []
+      else
+        let successors = out_arcs gr arc.tgt in
+        let valid_successors = 
+          List.filter (fun a -> (a.lbl>0) && (not (List.mem a.tgt (List.map (fun arc -> arc.tgt) pth)))) successors 
+        in
+        List.fold_left (fun acu successor ->
+          if acu <> [] then acu
+          else aux (arc :: marked_arcs) (arc :: pth) successor) [] valid_successors
+    in
+    let start_arcs = out_arcs gr src in
+    List.fold_left (fun acu start_arc -> 
+      if acu <> [] then acu 
+      else aux [] [] start_arc) [] start_arcs;;
     
-    
+
 (* augmente tous les flots sortants du chemin du maximum possible *)
 let increase_flow gr pth =
   let rec increase_flow_loop gr pth flow_to_add = 
@@ -48,3 +44,13 @@ let increase_flow gr pth =
     | head::tail -> increase_flow_loop (add_arc (add_arc gr head.tgt head.src flow_to_add) head.src head.tgt (-flow_to_add)) tail flow_to_add
   in
 increase_flow_loop gr pth (min_flow pth);;
+
+
+let ford_fulkerson_algo gr src dst = 
+  let rec ford_fulkerson_aux gr =  
+    let pth = find_path gr src dst in
+    match pth with 
+    | [] -> gr
+    | path -> ford_fulkerson_aux (increase_flow gr path)
+  in
+  ford_fulkerson_aux gr ;;

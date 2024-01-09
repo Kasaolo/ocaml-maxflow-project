@@ -35,11 +35,19 @@ let () =
   (*let graphtest = clone_nodes graph in*)
   let graphInt = gmap graph (fun str -> int_of_string str) in
   let graphInit = init_labels graphInt in
-  let graphtest = increase_flow graphInit (find_path graphInit 0 5) in
+  (*let graphtest = increase_flow graphInit (find_path graphInit 0 5) in*)
+  (*let graphtest2 = increase_flow graphtest (find_path graphtest 0 5) in*) 
+  (*let graphtest3 = increase_flow graphtest2 (find_path graphtest2 0 5) in*)
+  
+  (*Printf.printf "premier noeud du chemin : %d\n" (List.hd (find_path graphInit 0 5)).src;
+  Printf.printf "deuxième noeud du chemin : %d\n" (List.hd (find_path graphInit 0 5)).tgt;
+  Printf.printf "troisieme noeud du chemin : %d\n" (List.nth (find_path graphInit 0 5) 1).tgt;
+  Printf.printf "4ième noeud du chemin : %d\n" (List.nth (find_path graphInit 0 5) 2).tgt;*)
+
   
   (*[{src=0;tgt=1;lbl=7};{src=1;tgt=4;lbl=1};{src=4;tgt=5;lbl=14}]*)
-
-  let graphStr = gmap graphtest (fun x -> string_of_int x) in
+  let graphTest =  ford_fulkerson_algo graphInit 0 10  in
+  let graphStr = gmap graphTest (fun x -> string_of_int x) in
  
   (* Rewrite the graph that has been read. *)
   let () = export outfile graphStr in 
