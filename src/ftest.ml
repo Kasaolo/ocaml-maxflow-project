@@ -1,6 +1,16 @@
 open Gfile
 open Tools
 open Ford_fulkerson
+open Graph
+
+
+let print_path pth = 
+  let rec print_path_aux pth = 
+    match pth with 
+    | [] -> ()
+    | head::tail -> print_string (string_of_int head.src^"->"^string_of_int head.tgt^" lbl : "^string_of_int head.lbl^" "); print_path_aux tail
+  in
+  print_path_aux pth; print_newline();;
 
 let () =
 
@@ -35,8 +45,12 @@ let () =
   (*let graphtest = clone_nodes graph in*)
   let graphInt = gmap graph (fun str -> int_of_string str) in
   let graphInit = init_labels graphInt in
-  (*let graphtest = increase_flow graphInit (find_path graphInit 0 5) in*)
-  (*let graphtest2 = increase_flow graphtest (find_path graphtest 0 5) in*) 
+  (*let pth = find_path graphInit 0 2 in
+  (print_path pth);
+  let graphTest = increase_flow graphInit (pth) in
+  let pth2 = find_path graphTest 0 2 in
+  (print_path pth2);
+  let graphtest2 = increase_flow graphTest (pth2) in*) 
   (*let graphtest3 = increase_flow graphtest2 (find_path graphtest2 0 5) in*)
   
   (*Printf.printf "premier noeud du chemin : %d\n" (List.hd (find_path graphInit 0 5)).src;
@@ -46,7 +60,7 @@ let () =
 
   
   (*[{src=0;tgt=1;lbl=7};{src=1;tgt=4;lbl=1};{src=4;tgt=5;lbl=14}]*)
-  let graphTest =  ford_fulkerson_algo graphInit 0 10  in
+  let graphTest =  ford_fulkerson_algo graphInit 0 9  in
   let graphStr = gmap graphTest (fun x -> string_of_int x) in
  
   (* Rewrite the graph that has been read. *)

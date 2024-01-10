@@ -19,21 +19,22 @@ let min_flow pth =
 
   let find_path gr src dst =
     let rec aux marked_arcs pth arc =
-      if arc.tgt = dst then List.rev (arc :: pth)
+      if arc.tgt = dst then List.sort_uniq compare (List.rev (arc :: pth))
       else if List.mem arc marked_arcs then []
       else
         let successors = out_arcs gr arc.tgt in
         let valid_successors = 
-          List.filter (fun a -> (a.lbl>0) && (not (List.mem a.tgt (List.map (fun arc -> arc.tgt) pth)))) successors 
+          List.filter (fun a -> (a.lbl>0) && (not (List.mem a.tgt (List.map (fun arc -> arc.src) pth)))) successors 
         in
         List.fold_left (fun acu successor ->
           if acu <> [] then acu
           else aux (arc :: marked_arcs) (arc :: pth) successor) [] valid_successors
     in
     let start_arcs = out_arcs gr src in
+    let valid_start_arcs = List.filter (fun a -> a.lbl>0) start_arcs in
     List.fold_left (fun acu start_arc -> 
       if acu <> [] then acu 
-      else aux [] [] start_arc) [] start_arcs;;
+      else aux [] (start_arc::[]) start_arc) [] valid_start_arcs;;
     
 
 (* augmente tous les flots sortants du chemin du maximum possible *)
@@ -54,3 +55,12 @@ let ford_fulkerson_algo gr src dst =
     | path -> ford_fulkerson_aux (increase_flow gr path)
   in
   ford_fulkerson_aux gr ;;
+
+
+let print_path pth = 
+  let rec print_path_aux pth = 
+    match pth with 
+    | [] -> ()
+    | head::tail -> print_string (string_of_int head.src^"->"^string_of_int head.tgt^" "); print_path_aux tail
+  in
+  print_path_aux pth; print_newline();;
