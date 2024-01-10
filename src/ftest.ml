@@ -60,7 +60,7 @@ let () =
 
   
   (*[{src=0;tgt=1;lbl=7};{src=1;tgt=4;lbl=1};{src=4;tgt=5;lbl=14}]*)
-  let graphTest =  ford_fulkerson_algo graphInit 9 8 in
+  let graphTest =  ford_fulkerson_algo graphInit _source _sink in
   let graphStr = gmap graphTest (fun x -> string_of_int x) in
  
   (* Rewrite the graph that has been read. *)

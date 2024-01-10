@@ -1,0 +1,34 @@
+digraph finite_graph {
+  fontname="Helvetica,Arial,sans-serif"
+  node [fontname="Helvetica,Arial,sans-serif"]
+  edge [fontname="Helvetica,Arial,sans-serif"]
+  rankdir=LR;
+  node [shape = circle];  8 -> 0 [label = 464];
+  1 -> 7 [label = 1622];
+  1 -> 5 [label = 0];
+  1 -> 9 [label = 0];
+  1 -> 6 [label = 1546];
+  3 -> 9 [label = 1021];
+  3 -> 6 [label = 465];
+  6 -> 1 [label = 362];
+  6 -> 3 [label = 401];
+  6 -> 7 [label = 1461];
+  7 -> 1 [label = 0];
+  7 -> 0 [label = 2870];
+  7 -> 6 [label = 213];
+  0 -> 8 [label = 464];
+  0 -> 7 [label = 0];
+  0 -> 5 [label = 0];
+  2 -> 5 [label = 1933];
+  2 -> 4 [label = 2263];
+  5 -> 1 [label = 1758];
+  5 -> 2 [label = 175];
+  5 -> 0 [label = 686];
+  5 -> 4 [label = 763];
+  4 -> 2 [label = 465];
+  4 -> 5 [label = 1449];
+  4 -> 9 [label = 1322];
+  9 -> 1 [label = 1048];
+  9 -> 3 [label = 1085];
+  9 -> 4 [label = 210];
+}

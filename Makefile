@@ -1,8 +1,8 @@
 .PHONY: all build format edit demo clean
 
 src?=0
-dst?=5
-graph?=graph7.txt
+dst?=2
+graph?=graph3.txt
 
 all: build
 
@@ -18,9 +18,31 @@ edit:
 	code . -n
 
 demo: build
-	@echo "\n   ⚡  EXECUTING  ⚡\n"
-	./ftest.exe graphs/${graph} $(src) $(dst) outfile.txt
-	@echo "\n   🥁  RESULT (content of outfile)  🥁\n"
+	./ftest.exe graphs/graph1.txt $(src) $(dst) outfile1.txt
+	@cat outfile.txt
+
+	./ftest.exe graphs/graph2.txt $(src) $(dst) outfile2.txt
+	@cat outfile.txt
+
+	./ftest.exe graphs/graph3.txt $(src) $(dst) outfile3.txt
+	@cat outfile.txt
+
+	./ftest.exe graphs/graph4.txt $(src) $(dst) outfile4.txt
+	@cat outfile.txt
+
+	./ftest.exe graphs/graph5.txt $(src) $(dst) outfile5.txt
+	@cat outfile.txt
+
+	./ftest.exe graphs/graph6.txt $(src) $(dst) outfile6.txt
+	@cat outfile.txt
+
+	./ftest.exe graphs/graph7.txt $(src) $(dst) outfile7.txt
+	@cat outfile.txt
+
+	./ftest.exe graphs/graph8.txt $(src) $(dst) outfile8.txt
+	@cat outfile.txt
+
+	./ftest.exe graphs/graph9.txt $(src) $(dst) outfile9.txt
 	@cat outfile.txt
 
 clean:
