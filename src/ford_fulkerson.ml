@@ -7,13 +7,23 @@ let init_labels gr =
   e_fold gr aux_init gr ;; 
 
 (* débit disponible sur cet arc (capacité - débit actuel) *)
-let available_flow arc = 
-  arc.lbl ;;
+let available_flow gr id1 id2 = 
+  let arc1 = 
+    match (find_arc gr id1 id2) with
+   | None -> failwith "Arc not found"
+   | Some a -> a.lbl and  
+  arc2 = 
+    match (find_arc gr id2 id1) with
+   | None -> failwith "Arc not found"
+   | Some a -> a.lbl  
+  in    
+  if (arc1.lbl > arc2.lbl) then ((arc1.lbl-arc2.lbl),arc1)
+  else ((arc2.lbl-arc1.lbl),arc2) ;;
 
 (* renvoie le débit dispo le + petit sur ce chemin *)
 let min_flow pth = 
-  List.fold_left (fun acu a -> if (available_flow a) <= acu 
-    then (available_flow a) else acu) (available_flow (List.hd pth)) pth ;;
+  List.fold_left (fun acu a -> if a.lbl <= acu 
+    then a.lbl else acu) ((List.hd pth).lbl) pth ;;
  
 (* Trouve le chemin optimal entre la source et la destination en réalisant un parcours en largeur*)
 
@@ -64,3 +74,53 @@ let print_path pth =
     | head::tail -> print_string (string_of_int head.src^"->"^string_of_int head.tgt^" "); print_path_aux tail
   in
   print_path_aux pth; print_newline();;
+
+
+
+(*let state_to_flow grInit grState =
+  let rec modify_arcs grInit grState acu = 
+    (*On parcours tout le graphe de flow initial*)
+    match grInit with 
+   |[] -> acu
+   |(idInit,larcI) :: restI  -> 
+    match grState with 
+   |[] -> [] 
+   |(idState,larcS) :: restS -> 
+    if (idInit=idState) then 
+      match larcS with 
+   | [] -> []
+   | arc :: restarc ->  
+    match (find_arc arc.src arc.tgt grInit) with
+   | None -> arc.lbl
+     
+  e_fold grInit (modify_arcs) grInit;;*)
+
+  (*let state_to_flow gr = 
+    let blankGraph = clone_nodes grState in
+    let rec aux gr larc = 
+      match larc with
+     | [] -> gr
+     | arc :: rest -> 
+      let first_arc = (available_flow gr arc.src arc.tgt).snd and
+      flow = (available_flow gr arc.src arc.tgt).fst in
+      if (first_arc = arc) 
+        then 
+          add_arc blankGraph arc.src arc.tgt flow
+      else 
+        add_arc blankGraph arc.tgt arc.src flow
+    in
+    n_fold grState (fun n -> (aux grState out_arcs gr n)) *)
+
+
+let state_to_flow gr = 
+let blankGraph = clone_nodes gr in
+let aux gr arc = 
+  let first_arc = Stdlib.snd (available_flow gr arc.src arc.tgt) and
+  flow = Stdlib.fst (available_flow gr arc.src arc.tgt) in
+  if (first_arc = arc) 
+    then 
+      add_arc blankGraph arc.src arc.tgt flow
+  else 
+    add_arc blankGraph arc.tgt arc.src flow
+in
+e_fold gr (fun a -> (aux gr a)) ;;
