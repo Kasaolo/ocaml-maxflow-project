@@ -13,6 +13,8 @@ val expenses : person list -> int
 
 val diff : person -> person list -> int 
 
-val init_person_graph : int list -> 'a graph
+val init_due_pid : person list -> person list
 
-val connect_person_graph : 'a graph -> 'a graph
+val init_person_graph : person list -> 'a graph
+
+val connect_person_graph : id graph -> id graph
