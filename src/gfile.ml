@@ -1,5 +1,6 @@
 open Graph
 open Printf
+open Money_sharing
     
 type path = string
 
@@ -133,3 +134,30 @@ let export path graph =
   close_out ff ;
   ()
   
+  let export_MS path graph l_persons = 
+  
+    (* Open a write-file. *)
+    let ff = open_out path in
+  
+    (* Write in this file. *)
+    fprintf ff "digraph finite_graph {\n" ;
+    fprintf ff "  fontname=\"Helvetica,Arial,sans-serif\"\n";
+    fprintf ff "  node [fontname=\"Helvetica,Arial,sans-serif\"]\n";
+    fprintf ff "  edge [fontname=\"Helvetica,Arial,sans-serif\"]\n";
+    fprintf ff "  rankdir=LR;\n";
+    fprintf ff "  node [shape = circle];";
+  
+    (* Write all arcs *)
+    let _ = e_fold graph (fun count arc -> 
+      if (arc.lbl = string_of_int max_int) 
+      then (fprintf ff "  %s -> %s [label = \"inf\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name; count + 1)
+      else if (arc.src=(-1))
+      then (fprintf ff "  Source -> %s [label = \"%s\"];\n" (get_person l_persons arc.tgt).name arc.lbl; count + 1)
+      else if (arc.tgt=(-2))
+      then (fprintf ff "  %s -> Sink [label = \"%s\"];\n" (get_person l_persons arc.src).name arc.lbl; count + 1)
+      else (fprintf ff "  %s -> %s [label = \"%s\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name arc.lbl; count + 1)) 0 in
+    
+    fprintf ff "}" ;
+    
+    close_out ff ;
+    ()

@@ -2,6 +2,7 @@
  * Write a graph to a file. *)
 
 open Graph
+open Money_sharing
 
 type path = string
 
@@ -19,3 +20,5 @@ val write_file: path -> string graph -> unit
 
 (* Writes a string graph in dot format *)
 val export : path -> string graph -> unit
+
+val export_MS : path -> string graph -> person list ->  unit

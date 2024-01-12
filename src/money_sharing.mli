@@ -18,3 +18,8 @@ val init_due_pid : person list -> person list
 val init_person_graph : person list -> 'a graph
 
 val connect_person_graph : id graph -> id graph
+
+val add_src_sink : id graph -> person list -> id graph
+
+(*Used in gfile, export_MS method to display*)
+val get_person : person list -> int -> person 
