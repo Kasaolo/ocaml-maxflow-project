@@ -151,9 +151,9 @@ let export path graph =
     let _ = e_fold graph (fun count arc -> 
       if (arc.lbl = string_of_int max_int) 
       then (fprintf ff "  %s -> %s [label = \"inf\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name; count + 1)
-      else if (arc.src=(-1))
+      else if (arc.src=0)
       then (fprintf ff "  Source -> %s [label = \"%s\"];\n" (get_person l_persons arc.tgt).name arc.lbl; count + 1)
-      else if (arc.tgt=(-2))
+      else if (arc.tgt=(List.length l_persons + 1))
       then (fprintf ff "  %s -> Sink [label = \"%s\"];\n" (get_person l_persons arc.src).name arc.lbl; count + 1)
       else (fprintf ff "  %s -> %s [label = \"%s\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name arc.lbl; count + 1)) 0 in
     

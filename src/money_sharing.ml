@@ -30,7 +30,7 @@ let init_due_pid l_persons =
    | pers :: rest ->
     loop rest (pacu+1) ({pers with due=(diff pers l_persons);pid=pacu} :: acu) 
    in
-   loop l_persons 0 [] ;; 
+   loop l_persons 1 [] ;; 
 
 
 let init_person_graph l_persons =
@@ -41,24 +41,25 @@ let init_person_graph l_persons =
   in
   ipg_loop l_persons empty_graph ;;
 
-let connect_person_graph p_gr =
+let connect_person_graph p_gr l_persons =
   n_fold p_gr (fun p_gr n1 -> 
     (n_fold p_gr (fun p_gr n2 -> 
                       if n2<>n1 
-                      then add_arc p_gr n1 n2 max_int 
+                      then add_arc p_gr n1 n2 (expenses l_persons)
                       else p_gr) p_gr)) p_gr;;
 
 let add_src_sink p_gr l_persons=
-  let gr_1 = new_node p_gr (-1) in
-  let gr_2 = new_node gr_1 (-2) in
+  let gr_1 = new_node p_gr 0 
+  and sink_pid = (List.length l_persons + 1) in
+  let gr_2 = new_node gr_1 sink_pid in
   let rec add_src_sink_aux gr l_pers =
     match l_pers with 
    | [] -> gr
    | pers :: rest -> 
     if (pers.due < 0) 
-    then (add_src_sink_aux (new_arc gr {src=(-1);tgt=pers.pid;lbl=(-pers.due)} ) rest)
+    then (add_src_sink_aux (new_arc gr {src=0;tgt=pers.pid;lbl=(-pers.due)} ) rest)
     else if (pers.due > 0)
-    then (add_src_sink_aux (new_arc gr {src=pers.pid;tgt=(-2);lbl=pers.due}) rest)
+    then (add_src_sink_aux (new_arc gr {src=pers.pid;tgt=sink_pid;lbl=pers.due}) rest)
     else (add_src_sink_aux gr rest) 
   in
   add_src_sink_aux gr_2 l_persons;;
