@@ -19,9 +19,11 @@ let min_flow pth =
     let rec aux marked_arcs pth arc =
       (*If the target of an arc is the wanted destination, this arc is added to the marked arcs list 
          and we return the reversed marked arcs list*)
-      if (arc.tgt = dst && arc.lbl > 0)then List.sort_uniq compare (List.rev (arc :: pth))
+      if (arc.tgt = dst && arc.lbl > 0) then (List.rev (arc :: pth))
         (*Else if an arc is already in our marked list, we do nothing*)
-      else if List.mem arc marked_arcs then []
+      else if (List.mem arc marked_arcs || 
+        (let rev_arc = find_arc gr arc.tgt arc.src in 
+        match rev_arc with Some revarc -> List.mem revarc marked_arcs | _ -> false)) then []
         (*Else, we check that the next arcs are valid (all out arcs from the target node)*)
       else
         let successors = out_arcs gr arc.tgt in
@@ -38,7 +40,7 @@ let min_flow pth =
     let valid_start_arcs = List.filter (fun a -> a.lbl>0) start_arcs in
     List.fold_left (fun acu start_arc -> 
       if acu <> [] then acu 
-      else aux [] (start_arc::[]) start_arc) [] valid_start_arcs;;
+      else aux [] ([]) start_arc) [] valid_start_arcs;;
     
 
 (* Increase all outgoing flows of a path as much as possible *)
@@ -74,10 +76,11 @@ let ford_fulkerson_algo gr src dst =
 
 
 let find_flow gr_gap a = 
-  match (find_arc gr_gap a.tgt a.src) with
+  match (find_arc gr_gap a.src a.tgt) with
   (*Return the lbl of the opposite arc which corresponds to the flow of an arc*)
   | None -> failwith "Arc does not exist"
-  | Some arc -> if arc.lbl > a.lbl then a.lbl else arc.lbl;;     
+  | Some arc -> if (arc.lbl > a.lbl) then 0 
+                else a.lbl - arc.lbl;;     
   
 
 let flow_capacity gr_orig gr_gap =  

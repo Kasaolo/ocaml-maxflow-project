@@ -7,6 +7,15 @@ type person =
     due: int;
     pid: int }
 
+let create_person (n,expenses) = {name=n;exp=expenses;due=0;pid=0} ;;
+
+let create_l_persons l = 
+  let rec create_l_persons_aux l acu =  
+    match l with
+   | [] -> acu 
+   | h :: t -> create_l_persons_aux t (create_person(Stdlib.fst h,Stdlib.snd h) :: acu)   
+  in
+  create_l_persons_aux l [] ;;   
 
 let expenses l_persons = 
   let rec loop l acu =

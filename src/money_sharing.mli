@@ -7,6 +7,10 @@ type person = {
     pid : int
 }
 
+val create_person : (string*int) -> person
+
+val create_l_persons : (string*int) list -> person list 
+
 val due_per_person : person list -> int
 
 val expenses : person list -> int 

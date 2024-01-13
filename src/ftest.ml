@@ -69,8 +69,8 @@ let () =
 
   else if Array.length Sys.argv = 3 then 
 
-  let _source = int_of_string Sys.argv.(1)
-  and _sink = int_of_string Sys.argv.(2) in 
+  (*let _source = int_of_string Sys.argv.(1)
+  and _sink = int_of_string Sys.argv.(2) in *)
 
   (* NEXT LINES USED TO MODELISE THE PROBLEM*)
   let l_persons = [{name = "John";exp = 40;due=0;pid=1} ;{name= "Kate";exp=10;due=0;pid=2};{name= "Ann";exp=10;due=0;pid=3}] in  
@@ -92,7 +92,7 @@ let () =
     let graphInt = gmap graph (fun str -> int_of_string str) in
     let graphInit = init_labels graphInt in
   
-    let graphTest =  ford_fulkerson_algo graphInit _source _sink in
+    let graphTest =  ford_fulkerson_algo graphInit 0 4 in
     let graphFinal = flow_capacity graphInt graphTest in
     export_MS "outfileMSApp.txt" graphFinal l_persons_pid in
   ()
