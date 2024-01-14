@@ -18,7 +18,7 @@ val ford_fulkerson_algo : int graph -> id -> id -> int graph
 val print_path : int arc list -> unit
 
 (*Return the flow of an arc based on the gap graph*)
-val find_flow : 'a graph -> 'a arc -> 'a
+val find_flow : int graph -> int arc -> int
 
 (*Convert a gap graph to a flow/capacity graph*)
 val flow_capacity: int graph -> int graph -> string graph

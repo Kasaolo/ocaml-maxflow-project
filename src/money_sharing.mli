@@ -7,6 +7,10 @@ type person = {
     pid : int
 }
 
+val create_person : (string*int) -> person
+
+val create_l_persons : (string*int) list -> person list 
+
 val due_per_person : person list -> int
 
 val expenses : person list -> int 
@@ -17,7 +21,7 @@ val init_due_pid : person list -> person list
 
 val init_person_graph : person list -> 'a graph
 
-val connect_person_graph : id graph -> id graph
+val connect_person_graph : id graph -> person list -> id graph
 
 val add_src_sink : id graph -> person list -> id graph
 
