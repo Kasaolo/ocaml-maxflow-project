@@ -2,7 +2,15 @@ open Gfile
 open Tools
 open Ford_fulkerson
 open Graph
+open Money_sharing
 
+let print_persons lp = 
+  let rec print_persons_aux lp = 
+    match lp with 
+    | [] -> ()
+    | head::tail -> print_string (head.name^"->"^string_of_int head.exp^" "); print_persons_aux tail
+  in
+  print_persons_aux lp; print_newline();;
 
 let print_path pth = 
   let rec print_path_aux pth = 
@@ -48,39 +56,26 @@ let () =
     
     let graphTest =  ford_fulkerson_algo graphInit _source _sink in
     let graphFinal = flow_capacity graphInt graphTest in
-    (*let graphStr = gmap graphFinal (fun x -> (string_of_int (Stdlib.fst x))^"/"^(string_of_int (Stdlib.snd x))) in*)
     let () = export outfile graphFinal in
     ()
-    (* Rewrite the graph that has been read. *)
 
   (*---------------------APPLICATION OF FORD FULKERSON ALGORITHM : MONEY SHARING PROBLEM---------------------*)
 
   else if Array.length Sys.argv = 3 then 
 
-  (*let _source = int_of_string Sys.argv.(1)
-  and _sink = int_of_string Sys.argv.(2) in *)
+  let pers_file = Sys.argv.(1) 
+  and outfile_MS = Sys.argv.(2) in
 
   (* NEXT LINES USED TO MODELISE THE PROBLEM*)
-  let l_persons = [{name = "John";exp = 40;due=0;pid=1} ;{name= "Kate";exp=10;due=0;pid=2};{name= "Ann";exp=10;due=0;pid=3}] in  
+  let l_persons = l_persons_from_file pers_file 
+  in
+  print_persons l_persons;
   let l_persons_pid = init_due_pid l_persons in
-  let node_graph = init_person_graph l_persons_pid in
-  let linked_graph = connect_person_graph node_graph l_persons_pid in
-  let problem_graph = add_src_sink linked_graph l_persons_pid in
-  let graphStr = gmap problem_graph (fun a -> string_of_int a) in
-
- 
+  let person_graph = graph_from_l_persons l_persons_pid in
   
   let () = 
-    write_file "graphMS.txt" graphStr; 
     print_persons l_persons_pid;
-    export_MS "outfileMS.txt" graphStr l_persons;
-    (*NEXT LINES USED TO USE FORD FULKERSON ALGO ON THE PROBLEM GRAPH*)
-    let graph = from_file "graphMS.txt" in
-
-    let graphInt = gmap graph (fun str -> int_of_string str) in
-    let graphInit = init_labels graphInt in
-  
-    let graphTest =  ford_fulkerson_algo graphInit 0 4 in
-    let graphFinal = flow_capacity graphInt graphTest in
-    export_MS "outfileMSApp.txt" graphFinal l_persons_pid in
+    let graphTest =  ford_fulkerson_algo person_graph 0 (List.length l_persons_pid + 1) in
+    let graphFinal = flow_capacity person_graph graphTest in
+    export_MS_better outfile_MS graphFinal l_persons_pid in
   ()

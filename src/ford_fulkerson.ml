@@ -20,7 +20,7 @@ let min_flow pth =
       (*If the target of an arc is the wanted destination, this arc is added to the marked arcs list 
          and we return the reversed marked arcs list*)
       if (arc.tgt = dst && arc.lbl > 0) then (List.rev (arc :: pth))
-        (*Else if an arc is already in our marked list, we do nothing*)
+        (*Else if an arc (or its opposite arc) is already in our marked list, we do nothing*)
       else if (List.mem arc marked_arcs || 
         (let rev_arc = find_arc gr arc.tgt arc.src in 
         match rev_arc with Some revarc -> List.mem revarc marked_arcs | _ -> false)) then []

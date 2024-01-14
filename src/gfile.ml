@@ -134,70 +134,98 @@ let export path graph =
   close_out ff ;
   ()
   
-  let read_person l_persons line =
-    try Scanf.sscanf line "%s %d" (fun name expenses -> ({name=name;exp=expenses;due=0;pid=0}::l_persons) )
-    with e ->
-      Printf.printf "Cannot read node in line - %s:\n%s\n%!" (Printexc.to_string e) line ;
-      failwith "from_file"
+let read_person l_persons line =
+  try Scanf.sscanf line "%s %d" (fun name expenses -> ({name=name;exp=expenses;due=0;pid=0}::l_persons) )
+  with e ->
+    Printf.printf "Cannot read node in line - %s:\n%s\n%!" (Printexc.to_string e) line ;
+    failwith "from_file"
 
-  let l_persons_from_file path =
+let l_persons_from_file path =
 
-    let infile = open_in path in
-  
-    (* Read all lines until end of file. *)
-    let rec loop l_persons =
-      try
-        let line = input_line infile in
-  
-        (* Remove leading and trailing spaces. *)
-        let line = String.trim line in
-  
-        let l_persons2 =
-          (* Ignore empty lines *)
-          if line = "" then l_persons
-  
-          (* The first character of a line determines its content : n or e. *)
-          else match line.[0] with
-            | '%' -> read_comment l_persons line
-            | _ -> read_person l_persons line
-  
-            (* It should be a comment, otherwise we complain. *)
-            
-        in      
-        loop l_persons2
-  
-      with End_of_file -> l_persons (* Done *)
-    in
-  
-    let final_l_persons = loop [] in
-    
-    close_in infile ;
-    final_l_persons;;
+  let infile = open_in path in
 
-  let export_MS path graph l_persons = 
+  (* Read all lines until end of file. *)
+  let rec loop l_persons =
+    try
+      let line = input_line infile in
+
+      (* Remove leading and trailing spaces. *)
+      let line = String.trim line in
+
+      let l_persons2 =
+        (* Ignore empty lines *)
+        if line = "" then l_persons
+
+        (* The first character of a line determines its content : n or e. *)
+        else match line.[0] with
+          | '%' -> read_comment l_persons line
+          | _ -> read_person l_persons line
+
+          (* It should be a comment, otherwise we complain. *)
+          
+      in      
+      loop l_persons2
+
+    with End_of_file -> l_persons (* Done *)
+  in
+
+  let final_l_persons = loop [] in
   
-    (* Open a write-file. *)
-    let ff = open_out path in
+  close_in infile ;
+  final_l_persons;;
+
+let export_MS path graph l_persons = 
+
+  (* Open a write-file. *)
+  let ff = open_out path in
+
+  (* Write in this file. *)
+  fprintf ff "digraph finite_graph {\n" ;
+  fprintf ff "  fontname=\"Helvetica,Arial,sans-serif\"\n";
+  fprintf ff "  node [fontname=\"Helvetica,Arial,sans-serif\"]\n";
+  fprintf ff "  edge [fontname=\"Helvetica,Arial,sans-serif\"]\n";
+  fprintf ff "  rankdir=LR;\n";
+  fprintf ff "  node [shape = circle];";
+
+  (* Write all arcs *)
+  let _ = e_fold graph (fun count arc -> 
+    if (arc.lbl = string_of_int (expenses l_persons)) (*arc.lbl = string_of_int Integer.max_int*)
+    then (fprintf ff "  %s -> %s [label = \"inf\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name; count + 1)
+    else if (arc.src=0)
+    then (fprintf ff "  Source -> %s [label = \"%s\"];\n" (get_person l_persons arc.tgt).name arc.lbl; count + 1)
+    else if (arc.tgt=(List.length l_persons + 1))
+    then (fprintf ff "  %s -> Sink [label = \"%s\"];\n" (get_person l_persons arc.src).name arc.lbl; count + 1)
+    else (fprintf ff "  %s -> %s [label = \"%s\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name arc.lbl; count + 1)) 0 in
   
-    (* Write in this file. *)
-    fprintf ff "digraph finite_graph {\n" ;
-    fprintf ff "  fontname=\"Helvetica,Arial,sans-serif\"\n";
-    fprintf ff "  node [fontname=\"Helvetica,Arial,sans-serif\"]\n";
-    fprintf ff "  edge [fontname=\"Helvetica,Arial,sans-serif\"]\n";
-    fprintf ff "  rankdir=LR;\n";
-    fprintf ff "  node [shape = circle];";
+  fprintf ff "}" ;
   
-    (* Write all arcs *)
-    let _ = e_fold graph (fun count arc -> 
-      if (arc.lbl = string_of_int max_int) 
-      then (fprintf ff "  %s -> %s [label = \"inf\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name; count + 1)
-      else if (arc.src=0)
-      then (fprintf ff "  Source -> %s [label = \"%s\"];\n" (get_person l_persons arc.tgt).name arc.lbl; count + 1)
-      else if (arc.tgt=(List.length l_persons + 1))
-      then (fprintf ff "  %s -> Sink [label = \"%s\"];\n" (get_person l_persons arc.src).name arc.lbl; count + 1)
-      else (fprintf ff "  %s -> %s [label = \"%s\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name arc.lbl; count + 1)) 0 in
-    
-    fprintf ff "}" ;
-    
-    close_out ff ;
-    ()
+  close_out ff ;
+  ()
+
+let export_MS_better path graph l_persons = 
+
+  (* Open a write-file. *)
+  let ff = open_out path in
+
+  (* Write in this file. *)
+  fprintf ff "digraph finite_graph {\n" ;
+  fprintf ff "  fontname=\"Helvetica,Arial,sans-serif\"\n";
+  fprintf ff "  node [fontname=\"Helvetica,Arial,sans-serif\"]\n";
+  fprintf ff "  edge [fontname=\"Helvetica,Arial,sans-serif\"]\n";
+  fprintf ff "  rankdir=LR;\n";
+  fprintf ff "  node [shape = circle];";
+
+  (* Write all arcs *)
+  let _ = e_fold graph (fun count arc -> 
+    if (String.starts_with ~prefix:"0" (List.hd (String.split_on_char '/' arc.lbl))) 
+    then (();count + 1)
+    else if (arc.src=0)
+    then (();count + 1)
+    else if (arc.tgt=(List.length l_persons + 1))
+    then (();count + 1)
+    else (fprintf ff "  %s -> %s [label = \"%s\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name ("doit "^(List.hd (String.split_on_char '/' arc.lbl))^"€ à"); count + 1)) 0 in
+  
+  fprintf ff "}" ;
+  
+  close_out ff ;
+  ()

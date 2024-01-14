@@ -25,3 +25,5 @@ val export : path -> string graph -> unit
 val l_persons_from_file : path -> person list
 
 val export_MS : path -> string graph -> person list ->  unit
+
+val export_MS_better : path -> string graph -> person list ->  unit
