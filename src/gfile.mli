@@ -21,4 +21,7 @@ val write_file: path -> string graph -> unit
 (* Writes a string graph in dot format *)
 val export : path -> string graph -> unit
 
+(* Students-made functions *)
+val l_persons_from_file : path -> person list
+
 val export_MS : path -> string graph -> person list ->  unit

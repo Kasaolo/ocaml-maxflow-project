@@ -134,6 +134,46 @@ let export path graph =
   close_out ff ;
   ()
   
+  let read_person l_persons line =
+    try Scanf.sscanf line "%s %d" (fun name expenses -> ({name=name;exp=expenses;due=0;pid=0}::l_persons) )
+    with e ->
+      Printf.printf "Cannot read node in line - %s:\n%s\n%!" (Printexc.to_string e) line ;
+      failwith "from_file"
+
+  let l_persons_from_file path =
+
+    let infile = open_in path in
+  
+    (* Read all lines until end of file. *)
+    let rec loop l_persons =
+      try
+        let line = input_line infile in
+  
+        (* Remove leading and trailing spaces. *)
+        let line = String.trim line in
+  
+        let l_persons2 =
+          (* Ignore empty lines *)
+          if line = "" then l_persons
+  
+          (* The first character of a line determines its content : n or e. *)
+          else match line.[0] with
+            | '%' -> read_comment l_persons line
+            | _ -> read_person l_persons line
+  
+            (* It should be a comment, otherwise we complain. *)
+            
+        in      
+        loop l_persons2
+  
+      with End_of_file -> l_persons (* Done *)
+    in
+  
+    let final_l_persons = loop [] in
+    
+    close_in infile ;
+    final_l_persons;;
+
   let export_MS path graph l_persons = 
   
     (* Open a write-file. *)

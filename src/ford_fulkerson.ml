@@ -19,9 +19,9 @@ let min_flow pth =
     let rec aux marked_arcs pth arc =
       (*If the target of an arc is the wanted destination, this arc is added to the marked arcs list 
          and we return the reversed marked arcs list*)
-      if arc.tgt = dst then List.sort_uniq compare (List.rev (arc :: pth))
+      if (arc.tgt = dst && arc.lbl > 0) then List.sort_uniq compare (List.rev (arc :: pth))
         (*Else if an arc is already in our marked list, we do nothing*)
-      else if List.mem arc marked_arcs then []
+      else if (List.mem arc marked_arcs) then []
         (*Else, we check that the next arcs are valid (all out arcs from the target node)*)
       else
         let successors = out_arcs gr arc.tgt in
@@ -31,7 +31,7 @@ let min_flow pth =
         (*For all the valid arcs, we apply our algorithm to construct a path*)
         List.fold_left (fun acu successor ->
           if acu <> [] then acu
-          else aux (arc :: marked_arcs) (arc :: pth) successor) [] valid_successors
+          else aux (arc :: marked_arcs) (arc::pth) successor) [] valid_successors
     in
     (*Application of the above algorithm at the selected start node*)
     let start_arcs = out_arcs gr src in
@@ -51,11 +51,20 @@ let increase_flow gr pth =
   in
 increase_flow_loop gr pth (min_flow pth);;
 
+let print_path pth = 
+  let rec print_path_aux pth = 
+    match pth with 
+    | [] -> ()
+    | head::tail -> print_string (string_of_int head.src^"->"^string_of_int head.tgt^" "); print_path_aux tail
+  in
+  print_string "Début : "; print_path_aux pth; print_string "Fin"; print_newline();;
+
 
 let ford_fulkerson_algo gr src dst = 
   (*Application of our find path algortihm until there is no more valid path on the graph to the destination*)
   let rec ford_fulkerson_aux gr =  
     let pth = find_path gr src dst in
+    print_path pth;
     match pth with 
     | [] -> gr
     | path -> ford_fulkerson_aux (increase_flow gr path)
@@ -63,13 +72,7 @@ let ford_fulkerson_algo gr src dst =
   ford_fulkerson_aux gr ;;
 
 
-let print_path pth = 
-  let rec print_path_aux pth = 
-    match pth with 
-    | [] -> ()
-    | head::tail -> print_string (string_of_int head.src^"->"^string_of_int head.tgt^" "); print_path_aux tail
-  in
-  print_path_aux pth; print_newline();;
+
 
 let find_flow gr_gap a = 
   match (find_arc gr_gap a.tgt a.src) with

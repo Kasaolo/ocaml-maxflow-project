@@ -3,10 +3,10 @@ digraph finite_graph {
   node [fontname="Helvetica,Arial,sans-serif"]
   edge [fontname="Helvetica,Arial,sans-serif"]
   rankdir=LR;
-  node [shape = circle];  1 -> 0 [label = 6];
-  1 -> 2 [label = 1];
-  2 -> 1 [label = 2];
-  2 -> 0 [label = 4];
-  0 -> 1 [label = 0];
-  0 -> 2 [label = 0];
+  node [shape = circle];  1 -> 0 [label = "6"];
+  1 -> 2 [label = "1"];
+  2 -> 1 [label = "2"];
+  2 -> 0 [label = "4"];
+  0 -> 1 [label = "0"];
+  0 -> 2 [label = "0"];
 }
