@@ -189,13 +189,11 @@ let export_MS path graph l_persons =
 
   (* Write all arcs *)
   let _ = e_fold graph (fun count arc -> 
-    if (arc.lbl = string_of_int (expenses l_persons)) (*arc.lbl = string_of_int Integer.max_int*)
-    then (fprintf ff "  %s -> %s [label = \"inf\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name; count + 1)
-    else if (arc.src=0)
+    if (arc.src=0)
     then (fprintf ff "  Source -> %s [label = \"%s\"];\n" (get_person l_persons arc.tgt).name arc.lbl; count + 1)
     else if (arc.tgt=(List.length l_persons + 1))
     then (fprintf ff "  %s -> Sink [label = \"%s\"];\n" (get_person l_persons arc.src).name arc.lbl; count + 1)
-    else (fprintf ff "  %s -> %s [label = \"%s\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name arc.lbl; count + 1)) 0 in
+    else (fprintf ff "  %s -> %s [label = \"%s\"];\n" (get_person l_persons arc.src).name (get_person l_persons arc.tgt).name ((List.hd(String.split_on_char '/'arc.lbl))^"/inf"); count + 1)) 0 in
   
   fprintf ff "}" ;
   

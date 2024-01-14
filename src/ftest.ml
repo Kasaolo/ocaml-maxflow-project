@@ -77,5 +77,5 @@ let () =
     print_persons l_persons_pid;
     let graphTest =  ford_fulkerson_algo person_graph 0 (List.length l_persons_pid + 1) in
     let graphFinal = flow_capacity person_graph graphTest in
-    export_MS_better outfile_MS graphFinal l_persons_pid in
+    export_MS outfile_MS graphFinal l_persons_pid in
   ()
